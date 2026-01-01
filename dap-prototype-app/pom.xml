@@ -21,7 +21,7 @@
     <dependencies>
         <dependency>
             <groupId>com.example</groupId>
-            <artifactId>dap-prototype-models</artifactId>
+            <artifactId>dap-prototype-txn-models</artifactId>
             <version>0.0.2-SNAPSHOT</version>
         </dependency>
         <dependency>

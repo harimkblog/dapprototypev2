@@ -9,10 +9,10 @@
         <version>0.0.2-SNAPSHOT</version>
     </parent>
 
-    <artifactId>dap-prototype-models</artifactId>
-    <name>dap-prototype-models</name>
+    <artifactId>dap-prototype-txn-models</artifactId>
+    <name>dap-prototype-txn-models</name>
     <version>0.0.2-SNAPSHOT</version>
-    <description>DAP Prototype data models</description>
+    <description>DAP Prototype transaction data models</description>
 
     <dependencies>
         <dependency>
