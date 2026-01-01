@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings xmlns="http://dozermapper.github.io/schema/bean-mapping"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://dozermapper.github.io/schema/bean-mapping
+          https://dozermapper.github.io/schema/bean-mapping.xsd">
+
+    <mapping>
+        <class-a>com.example.dapprototype.model.RequestPayload</class-a>
+        <class-b>com.example.dapprototype.model.CustomerEnrichment</class-b>
+        <field>
+            <a>requestInfo.activityId</a>
+            <b>activityId</b>
+        </field>
+    </mapping>
+
+</mappings>

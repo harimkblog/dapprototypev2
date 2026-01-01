@@ -1,0 +1,118 @@
+openapi: 3.0.0
+info:
+  title: DAP Prototype API
+  version: 1.0.0
+  description: Sample API specification with request information tracking
+  contact:
+    name: API Support
+  license:
+    name: MIT
+    url: https://opensource.org/license/mit/
+
+servers:
+  - url: http://localhost:8080/api
+    description: Development server
+  - url: https://api.example.com/api
+    description: Production server
+
+paths:
+  /request:
+    post:
+      summary: Submit request with activity tracking
+      operationId: submitRequest
+      description: Submit a request with activity ID and timestamp
+      tags:
+        - Requests
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestInfo'
+            example:
+              requestInfo:
+                activityId: "abcd"
+                activityTimeStamp: "2025-12-30T13:36:00Z"
+      responses:
+        '200':
+          description: Request processed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RequestResponse'
+        '400':
+          description: Bad request - Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    RequestInfo:
+      type: object
+      required:
+        - requestInfo
+      properties:
+        requestInfo:
+          type: object
+          required:
+            - activityId
+            - activityTimeStamp
+          properties:
+            activityId:
+              type: string
+              description: Unique identifier for the activity
+              example: "abcd"
+              minLength: 1
+              maxLength: 256
+            activityTimeStamp:
+              type: string
+              format: date-time
+              description: Timestamp of the activity in RFC3339 format 'YYYY-MM-DDTHH:mm:ssZ'
+              example: "2025-12-30T13:36:00Z"
+
+    RequestResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          description: Indicates if the request was processed successfully
+          example: true
+        message:
+          type: string
+          description: Response message
+          example: "Request processed successfully"
+
+    ErrorResponse:
+      type: object
+      required:
+        - success
+        - message
+      properties:
+        success:
+          type: boolean
+          description: Indicates if the request was successful
+          example: false
+        message:
+          type: string
+          description: Error message
+          example: "Invalid request format"
+        code:
+          type: string
+          description: Error code for debugging
+          example: "ERR_INVALID_INPUT"
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+
+tags:
+  - name: Requests
+    description: Request management endpoints
