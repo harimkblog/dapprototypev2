@@ -1,6 +1,5 @@
 package com.example.dapprototype.controller;
 
-import com.example.dapprototype.model.RequestPayload;
 import com.example.dapprototype.model.RequestResponse;
 import com.example.dapprototype.service.RequestProcessingService;
 import org.springframework.http.ResponseEntity;

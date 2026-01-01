@@ -1,12 +1,9 @@
 package com.example.dapprototype.controller;
 
-import com.example.dapprototype.config.MapperAutoConfiguration;
+import com.example.dapprototype.classloader.TxnClassLoaderService;
 import com.example.dapprototype.config.OpenApiValidatorConfig;
-import com.example.dapprototype.model.RequestInfo;
-import com.example.dapprototype.model.RequestPayload;
 import com.example.dapprototype.service.OpenApiRequestValidator;
 import com.example.dapprototype.service.RequestProcessingService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,23 +17,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = RequestController.class)
-@Import({RequestProcessingService.class, OpenApiRequestValidator.class, OpenApiValidatorConfig.class, MapperAutoConfiguration.class})
+@Import({RequestProcessingService.class, OpenApiRequestValidator.class, OpenApiValidatorConfig.class, TxnClassLoaderService.class})
 class RequestControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @Test
     @DisplayName("POST /api/request returns success payload")
     void submitRequestReturnsSuccess() throws Exception {
-        RequestPayload payload = new RequestPayload(new RequestInfo("abcd", "2025-12-30T13:36:00Z"));
+        String validJson = "{\"requestInfo\": {\"activityId\": \"abcd\", \"activityTimeStamp\": \"2025-12-30T13:36:00Z\"}}";
 
         mockMvc.perform(post("/api/request")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(payload)))
+                        .content(validJson))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.message").value("Request processed successfully"));
