@@ -19,6 +19,7 @@
 
     <modules>
         <module>dap-prototype-models</module>
+        <module>dap-prototype-common-models</module>
         <module>dap-prototype-app</module>
     </modules>
 
