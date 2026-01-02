@@ -32,10 +32,10 @@ public class TxnClassLoaderService {
             URL[] urls = buildClassLoaderUrls();
             // Use the current thread's context class loader as parent
             // This ensures txn-models classes can access dependencies like MapStruct
-            ClassLoader parentClassLoader = Thread.currentThread().getContextClassLoader();
-            txnClassLoader = new TxnClassLoader(urls, parentClassLoader);
+            //ClassLoader parentClassLoader = Thread.currentThread().getContextClassLoader();
+            txnClassLoader = new TxnClassLoader(urls /** ,parentClassLoader*/);
             logger.info("TxnClassLoader initialized successfully with {} URLs", urls.length);
-            logger.info("Parent ClassLoader: {}", parentClassLoader.getClass().getName());
+            logger.info("Parent ClassLoader: {}", ClassLoader.getSystemClassLoader().getClass().getName());
             for (URL url : urls) {
                 logger.debug("TxnClassLoader URL: {}", url);
             }
