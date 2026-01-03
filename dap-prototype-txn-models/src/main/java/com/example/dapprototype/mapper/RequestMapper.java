@@ -1,6 +1,6 @@
 package com.example.dapprototype.mapper;
 
-import com.example.dapprototype.model.CustomerEnrichment;
+import com.example.dapprototype.model.CustomerRequest;
 import com.example.dapprototype.model.RequestPayload;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -12,5 +12,5 @@ public interface RequestMapper {
     RequestMapper INSTANCE = Mappers.getMapper(RequestMapper.class);
 
     @Mapping(source = "requestInfo.activityId", target = "activityId")
-    CustomerEnrichment toCustomerEnrichment(RequestPayload requestPayload);
+    CustomerRequest toCustomerRequest(RequestPayload requestPayload);
 }

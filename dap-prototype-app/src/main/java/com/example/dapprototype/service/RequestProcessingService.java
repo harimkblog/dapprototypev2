@@ -2,7 +2,7 @@ package com.example.dapprototype.service;
 
 import com.atlassian.oai.validator.report.ValidationReport;
 import com.example.dapprototype.classloader.TxnClassLoaderService;
-import com.example.dapprototype.model.CustomerEnrichment;
+import com.example.dapprototype.model.CustomerRequest;
 import com.example.dapprototype.model.ErrorResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -95,13 +95,13 @@ public class RequestProcessingService {
             return ResponseEntity.badRequest().body(error);
         }
 
-        // Create CustomerEnrichment object from RequestPayload using dynamically loaded mapper
+        // Create CustomerRequest object from RequestPayload using dynamically loaded mapper
         try {
-            CustomerEnrichment customerEnrichment = mapToCustomerEnrichment(payload);
-            logger.debug("Mapped to CustomerEnrichment: {}", customerEnrichment);
-            return ResponseEntity.ok(customerEnrichment);
+            CustomerRequest customerRequest = mapToCustomerRequest(payload);
+            logger.debug("Mapped to CustomerRequest: {}", customerRequest);
+            return ResponseEntity.ok(customerRequest);
         } catch (Exception e) {
-            logger.error("Failed to map payload to CustomerEnrichment", e);
+            logger.error("Failed to map payload to CustomerRequest", e);
             ErrorResponse error = new ErrorResponse(false, "Error processing request", "PROCESSING_ERROR", 
                 java.util.List.of(e.getMessage()));
             return ResponseEntity.status(500).body(error);
@@ -109,25 +109,25 @@ public class RequestProcessingService {
     }
     
     /**
-     * Maps the dynamically loaded RequestPayload object to CustomerEnrichment
+     * Maps the dynamically loaded RequestPayload object to CustomerRequest
      * using reflection to invoke the mapper method.
      * 
      * @param payload the RequestPayload object (loaded dynamically)
-     * @return CustomerEnrichment object
+     * @return CustomerRequest object
      * @throws Exception if reflection fails
      */
-    private CustomerEnrichment mapToCustomerEnrichment(Object payload) throws Exception {
-        // Use reflection to call: requestMapper.toCustomerEnrichment(payload)
+    private CustomerRequest mapToCustomerRequest(Object payload) throws Exception {
+        // Use reflection to call: requestMapper.toCustomerRequest(payload)
         Method mapperMethod = requestMapperInstance.getClass()
-            .getMethod("toCustomerEnrichment", requestPayloadClass);
+            .getMethod("toCustomerRequest", requestPayloadClass);
         
         Object result = mapperMethod.invoke(requestMapperInstance, payload);
         
-        // The result should be a CustomerEnrichment object
-        if (result instanceof CustomerEnrichment) {
-            return (CustomerEnrichment) result;
+        // The result should be a CustomerRequest object
+        if (result instanceof CustomerRequest) {
+            return (CustomerRequest) result;
         } else {
-            throw new IllegalStateException("Mapper did not return CustomerEnrichment: " + 
+            throw new IllegalStateException("Mapper did not return CustomerRequest: " + 
                 (result != null ? result.getClass().getName() : "null"));
         }
     }

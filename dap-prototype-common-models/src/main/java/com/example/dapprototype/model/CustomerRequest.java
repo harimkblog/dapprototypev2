@@ -7,6 +7,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CustomerEnrichment {
+public class CustomerRequest {
         private String activityId;
 }

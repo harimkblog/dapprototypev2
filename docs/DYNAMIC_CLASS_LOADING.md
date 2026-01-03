@@ -60,8 +60,8 @@ The `TxnClassLoader` extends `URLClassLoader` and uses the system class loader a
 
 3. **Request Processing**
    - JSON deserialization uses the dynamically loaded `RequestPayload` class
-   - Mapping uses reflection to invoke `requestMapper.toCustomerEnrichment(payload)`
-   - Result is cast to `CustomerEnrichment` (loaded by app class loader)
+   - Mapping uses reflection to invoke `requestMapper.toCustomerRequest(payload)`
+   - Result is cast to `CustomerRequest` (loaded by app class loader)
 
 ### Dynamic Loading Code Example
 
@@ -76,7 +76,7 @@ Object payload = objectMapper.readValue(rawBody, requestPayloadClass);
 
 // Use reflection to invoke mapper method
 Method mapperMethod = requestMapperInstance.getClass()
-    .getMethod("toCustomerEnrichment", requestPayloadClass);
+    .getMethod("toCustomerRequest", requestPayloadClass);
 Object result = mapperMethod.invoke(requestMapperInstance, payload);
 ```
 

@@ -2,7 +2,7 @@ package com.example.dapprototype.service;
 
 import com.example.dapprototype.classloader.TxnClassLoaderService;
 import com.example.dapprototype.config.OpenApiValidatorConfig;
-import com.example.dapprototype.model.CustomerEnrichment;
+import com.example.dapprototype.model.CustomerRequest;
 import com.example.dapprototype.model.ErrorResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,16 +21,16 @@ class RequestProcessingServiceTest {
     private RequestProcessingService requestProcessingService;
 
     @Test
-    @DisplayName("validateAndProcessRequest returns success for valid payload and creates CustomerEnrichment")
+    @DisplayName("validateAndProcessRequest returns success for valid payload and creates CustomerRequest")
     void validateAndProcessRequest_withValidPayload_returnsSuccess() throws Exception {
         String rawBody = "{\"requestInfo\": {\"activityId\": \"abcd\", \"activityTimeStamp\": \"2025-12-30T13:36:00Z\"}}";
 
         ResponseEntity<?> result = requestProcessingService.validateAndProcessRequest(rawBody);
 
         assertThat(result.getStatusCode().is2xxSuccessful()).isTrue();
-        assertThat(result.getBody()).isInstanceOf(CustomerEnrichment.class);
-        CustomerEnrichment enrichment = (CustomerEnrichment) result.getBody();
-        assertThat(enrichment.getActivityId()).isEqualTo("abcd");
+        assertThat(result.getBody()).isInstanceOf(CustomerRequest.class);
+        CustomerRequest customerRequest = (CustomerRequest) result.getBody();
+        assertThat(customerRequest.getActivityId()).isEqualTo("abcd");
     }
 
     @Test
