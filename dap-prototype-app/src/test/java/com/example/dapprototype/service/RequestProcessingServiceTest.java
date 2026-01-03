@@ -23,7 +23,7 @@ class RequestProcessingServiceTest {
     @Test
     @DisplayName("validateAndProcessRequest returns success for valid payload and creates CustomerRequest")
     void validateAndProcessRequest_withValidPayload_returnsSuccess() throws Exception {
-        String rawBody = "{\"requestInfo\": {\"activityId\": \"abcd\", \"activityTimeStamp\": \"2025-12-30T13:36:00Z\"}}";
+        String rawBody = "{\"activityId\": \"abcd\", \"activityTimeStamp\": \"2025-12-30T13:36:00Z\"}";
 
         ResponseEntity<?> result = requestProcessingService.validateAndProcessRequest(rawBody);
 
@@ -48,9 +48,9 @@ class RequestProcessingServiceTest {
     }
 
     @Test
-    @DisplayName("validateAndProcessRequest returns error for missing requestId")
+    @DisplayName("validateAndProcessRequest returns error for missing activityId")
     void validateAndProcessRequest_withMissingRequestId_returnsError() {
-        String rawBody = "{\"requestInfo\": {\"activityTimeStamp\": \"2025-12-30T13:36:00Z\"}}";
+        String rawBody = "{\"activityTimeStamp\": \"2025-12-30T13:36:00Z\"}";
 
         ResponseEntity<?> result = requestProcessingService.validateAndProcessRequest(rawBody);
 
@@ -64,7 +64,7 @@ class RequestProcessingServiceTest {
     @Test
     @DisplayName("validateAndProcessRequest returns error for missing timestamp")
     void validateAndProcessRequest_withMissingTimestamp_returnsError() {
-        String rawBody = "{\"requestInfo\": {\"activityId\": \"abcd\"}}";
+        String rawBody = "{\"activityId\": \"abcd\"}";
 
         ResponseEntity<?> result = requestProcessingService.validateAndProcessRequest(rawBody);
 
@@ -91,7 +91,7 @@ class RequestProcessingServiceTest {
     @Test
     @DisplayName("validateAndProcessRequest returns error for invalid timestamp format")
     void validateAndProcessRequest_withInvalidTimestampFormat_returnsError() {
-        String rawBody = "{\"requestInfo\": {\"activityId\": \"abcd\", \"activityTimeStamp\": \"not-a-date\"}}";
+        String rawBody = "{\"activityId\": \"abcd\", \"activityTimeStamp\": \"not-a-date\"}";
 
         ResponseEntity<?> result = requestProcessingService.validateAndProcessRequest(rawBody);
 
@@ -105,7 +105,7 @@ class RequestProcessingServiceTest {
     @Test
     @DisplayName("validateAndProcessRequest returns error for null requestId")
     void validateAndProcessRequest_withNullRequestId_returnsError() {
-        String rawBody = "{\"requestInfo\": {\"activityId\": null, \"activityTimeStamp\": \"2025-12-30T13:36:00Z\"}}";
+        String rawBody = "{\"activityId\": null, \"activityTimeStamp\": \"2025-12-30T13:36:00Z\"}";
 
         ResponseEntity<?> result = requestProcessingService.validateAndProcessRequest(rawBody);
 
@@ -119,7 +119,7 @@ class RequestProcessingServiceTest {
     @Test
     @DisplayName("validateAndProcessRequest returns error for empty requestId")
     void validateAndProcessRequest_withEmptyRequestId_returnsError() {
-        String rawBody = "{\"requestInfo\": {\"activityId\": \"\", \"activityTimeStamp\": \"2025-12-30T13:36:00Z\"}}";
+        String rawBody = "{\"activityId\": \"\", \"activityTimeStamp\": \"2025-12-30T13:36:00Z\"}";
 
         ResponseEntity<?> result = requestProcessingService.validateAndProcessRequest(rawBody);
 

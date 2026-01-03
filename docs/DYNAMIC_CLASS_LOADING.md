@@ -38,7 +38,7 @@ The `TxnClassLoader` extends `URLClassLoader` and uses the system class loader a
 #### 3. RequestProcessingService (Refactored)
 - **Location**: `com.example.dapprototype.service.RequestProcessingService`
 - **Changes**:
-  - Removed static imports of `RequestPayload` and `RequestMapper`
+  - Removed static imports of `RequestInfo` and `RequestMapper`
   - Dynamically loads these classes using `TxnClassLoader`
   - Uses reflection to deserialize JSON and invoke mapper methods
   - Logs class loader information for debugging
@@ -54,30 +54,30 @@ The `TxnClassLoader` extends `URLClassLoader` and uses the system class loader a
 
 2. **Service Initialization**
    - `RequestProcessingService` constructor calls `initializeDynamicClasses()`
-   - Loads `RequestPayload.class` dynamically
+   - Loads `RequestInfo.class` dynamically
    - Loads `RequestMapper.class` dynamically
    - Retrieves `RequestMapper.INSTANCE` (MapStruct generated)
 
 3. **Request Processing**
-   - JSON deserialization uses the dynamically loaded `RequestPayload` class
-   - Mapping uses reflection to invoke `requestMapper.toCustomerRequest(payload)`
+   - JSON deserialization uses the dynamically loaded `RequestInfo` class
+   - Mapping uses reflection to invoke `requestMapper.toCustomerRequest(requestInfo)`
    - Result is cast to `CustomerRequest` (loaded by app class loader)
 
 ### Dynamic Loading Code Example
 
 ```java
 // Load the class
-Class<?> requestPayloadClass = txnClassLoaderService.loadClass(
-    "com.example.dapprototype.model.RequestPayload"
+Class<?> requestInfoClass = txnClassLoaderService.loadClass(
+    "com.example.dapprototype.model.RequestInfo"
 );
 
 // Deserialize JSON to the dynamically loaded class
-Object payload = objectMapper.readValue(rawBody, requestPayloadClass);
+Object requestInfo = objectMapper.readValue(rawBody, requestInfoClass);
 
 // Use reflection to invoke mapper method
 Method mapperMethod = requestMapperInstance.getClass()
-    .getMethod("toCustomerRequest", requestPayloadClass);
-Object result = mapperMethod.invoke(requestMapperInstance, payload);
+    .getMethod("toCustomerRequest", requestInfoClass);
+Object result = mapperMethod.invoke(requestMapperInstance, requestInfo);
 ```
 
 ## Configuration
@@ -109,7 +109,7 @@ The implementation includes comprehensive logging to track class loading:
 ```
 INFO  c.e.d.c.TxnClassLoaderService - TxnClassLoader initialized successfully with 1 URLs
 DEBUG c.e.d.c.TxnClassLoaderService - TxnClassLoader URL: file:/path/to/txn-models/target/classes/
-INFO  c.e.d.s.RequestProcessingService - Loaded com.example.dapprototype.model.RequestPayload using com.example.dapprototype.classloader.TxnClassLoader
+INFO  c.e.d.s.RequestProcessingService - Loaded com.example.dapprototype.model.RequestInfo using com.example.dapprototype.classloader.TxnClassLoader
 INFO  c.e.d.s.RequestProcessingService - Loaded com.example.dapprototype.mapper.RequestMapper using com.example.dapprototype.classloader.TxnClassLoader
 ```
 
@@ -130,7 +130,7 @@ mvn spring-boot:run
 
 The application will:
 1. Initialize `TxnClassLoader` with the txn-models classes
-2. Dynamically load `RequestPayload` and `RequestMapper`
+2. Dynamically load `RequestInfo` and `RequestMapper`
 3. Process requests using reflection
 
 ## Testing

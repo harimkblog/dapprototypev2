@@ -26,7 +26,7 @@ class RequestControllerTest {
     @Test
     @DisplayName("POST /api/request returns success payload")
     void submitRequestReturnsSuccess() throws Exception {
-        String validJson = "{\"requestInfo\": {\"activityId\": \"abcd\", \"activityTimeStamp\": \"2025-12-30T13:36:00Z\"}}";
+        String validJson = "{\"activityId\": \"abcd\", \"activityTimeStamp\": \"2025-12-30T13:36:00Z\"}";
 
         mockMvc.perform(post("/api/request")
                         .contentType(MediaType.APPLICATION_JSON)

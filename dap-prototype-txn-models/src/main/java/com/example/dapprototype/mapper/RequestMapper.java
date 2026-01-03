@@ -1,7 +1,7 @@
 package com.example.dapprototype.mapper;
 
 import com.example.dapprototype.model.CustomerRequest;
-import com.example.dapprototype.model.RequestPayload;
+import com.example.dapprototype.model.RequestInfo;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -11,6 +11,6 @@ public interface RequestMapper {
 
     RequestMapper INSTANCE = Mappers.getMapper(RequestMapper.class);
 
-    @Mapping(source = "requestInfo.activityId", target = "activityId")
-    CustomerRequest toCustomerRequest(RequestPayload requestPayload);
+    @Mapping(source = "activityId", target = "activityId")
+    CustomerRequest toCustomerRequest(RequestInfo requestInfo);
 }

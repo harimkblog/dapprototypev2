@@ -18,7 +18,7 @@ import java.lang.reflect.Method;
 public class RequestProcessingService {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestProcessingService.class);
-    private static final String REQUEST_PAYLOAD_CLASS = "com.example.dapprototype.model.RequestPayload";
+    private static final String REQUEST_INFO_CLASS = "com.example.dapprototype.model.RequestInfo";
     private static final String REQUEST_MAPPER_CLASS = "com.example.dapprototype.mapper.RequestMapper";
     
     private final OpenApiRequestValidator openApiRequestValidator;
@@ -26,7 +26,7 @@ public class RequestProcessingService {
     private final TxnClassLoaderService txnClassLoaderService;
     
     // Dynamically loaded classes
-    private Class<?> requestPayloadClass;
+    private Class<?> requestInfoClass;
     private Object requestMapperInstance;
 
     public RequestProcessingService(OpenApiRequestValidator openApiRequestValidator, 
@@ -45,10 +45,10 @@ public class RequestProcessingService {
      */
     private void initializeDynamicClasses() {
         try {
-            // Load RequestPayload class dynamically
-            requestPayloadClass = txnClassLoaderService.loadClass(REQUEST_PAYLOAD_CLASS);
-            logger.info("Loaded {} using {}", REQUEST_PAYLOAD_CLASS, 
-                       requestPayloadClass.getClassLoader().getClass().getName());
+            // Load RequestInfo class dynamically
+            requestInfoClass = txnClassLoaderService.loadClass(REQUEST_INFO_CLASS);
+            logger.info("Loaded {} using {}", REQUEST_INFO_CLASS, 
+                       requestInfoClass.getClassLoader().getClass().getName());
             
             // Load RequestMapper class dynamically
             Class<?> requestMapperClass = txnClassLoaderService.loadClass(REQUEST_MAPPER_CLASS);
@@ -69,7 +69,7 @@ public class RequestProcessingService {
      * Validates and processes a raw JSON request body using dynamically loaded classes.
      * 
      * @param rawBody the raw JSON request body
-     * @return ResponseEntity with either the validated RequestPayload or an ErrorResponse
+     * @return ResponseEntity with either the validated RequestInfo or an ErrorResponse
      */
     public ResponseEntity<?> validateAndProcessRequest(String rawBody) {
         // Validate request against OpenAPI spec
@@ -82,26 +82,26 @@ public class RequestProcessingService {
             return ResponseEntity.badRequest().body(error);
         }
 
-        // Deserialize after validation passes using dynamically loaded RequestPayload class
-        Object payload;
+        // Deserialize after validation passes using dynamically loaded RequestInfo class
+        Object requestInfo;
         try {
-            payload = objectMapper.readValue(rawBody, requestPayloadClass);
-            logger.debug("Deserialized payload using class: {}", payload.getClass().getName());
-            logger.debug("Payload class loader: {}", payload.getClass().getClassLoader());
+            requestInfo = objectMapper.readValue(rawBody, requestInfoClass);
+            logger.debug("Deserialized requestInfo using class: {}", requestInfo.getClass().getName());
+            logger.debug("RequestInfo class loader: {}", requestInfo.getClass().getClassLoader());
         } catch (JsonProcessingException ex) {
-            logger.error("Failed to deserialize JSON to {}", REQUEST_PAYLOAD_CLASS, ex);
+            logger.error("Failed to deserialize JSON to {}", REQUEST_INFO_CLASS, ex);
             ErrorResponse error = new ErrorResponse(false, "Invalid JSON payload", "VALIDATION_ERROR", 
                 java.util.List.of("Invalid JSON payload"));
             return ResponseEntity.badRequest().body(error);
         }
 
-        // Create CustomerRequest object from RequestPayload using dynamically loaded mapper
+        // Create CustomerRequest object from RequestInfo using dynamically loaded mapper
         try {
-            CustomerRequest customerRequest = mapToCustomerRequest(payload);
+            CustomerRequest customerRequest = mapToCustomerRequest(requestInfo);
             logger.debug("Mapped to CustomerRequest: {}", customerRequest);
             return ResponseEntity.ok(customerRequest);
         } catch (Exception e) {
-            logger.error("Failed to map payload to CustomerRequest", e);
+            logger.error("Failed to map requestInfo to CustomerRequest", e);
             ErrorResponse error = new ErrorResponse(false, "Error processing request", "PROCESSING_ERROR", 
                 java.util.List.of(e.getMessage()));
             return ResponseEntity.status(500).body(error);
@@ -109,19 +109,19 @@ public class RequestProcessingService {
     }
     
     /**
-     * Maps the dynamically loaded RequestPayload object to CustomerRequest
+     * Maps the dynamically loaded RequestInfo object to CustomerRequest
      * using reflection to invoke the mapper method.
      * 
-     * @param payload the RequestPayload object (loaded dynamically)
+     * @param requestInfo the RequestInfo object (loaded dynamically)
      * @return CustomerRequest object
      * @throws Exception if reflection fails
      */
-    private CustomerRequest mapToCustomerRequest(Object payload) throws Exception {
-        // Use reflection to call: requestMapper.toCustomerRequest(payload)
+    private CustomerRequest mapToCustomerRequest(Object requestInfo) throws Exception {
+        // Use reflection to call: requestMapper.toCustomerRequest(requestInfo)
         Method mapperMethod = requestMapperInstance.getClass()
-            .getMethod("toCustomerRequest", requestPayloadClass);
+            .getMethod("toCustomerRequest", requestInfoClass);
         
-        Object result = mapperMethod.invoke(requestMapperInstance, payload);
+        Object result = mapperMethod.invoke(requestMapperInstance, requestInfo);
         
         // The result should be a CustomerRequest object
         if (result instanceof CustomerRequest) {
