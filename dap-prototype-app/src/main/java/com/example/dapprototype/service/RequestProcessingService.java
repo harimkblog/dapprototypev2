@@ -2,6 +2,7 @@ package com.example.dapprototype.service;
 
 import com.atlassian.oai.validator.report.ValidationReport;
 import com.example.dapprototype.classloader.TxnClassLoaderService;
+import com.example.dapprototype.model.Customer;
 import com.example.dapprototype.model.CustomerRequest;
 import com.example.dapprototype.model.DecisionResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -13,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class RequestProcessingService {
@@ -20,21 +23,26 @@ public class RequestProcessingService {
     private static final Logger logger = LoggerFactory.getLogger(RequestProcessingService.class);
     private static final String REQUEST_INFO_CLASS = "com.example.dapprototype.model.RequestInfo";
     private static final String REQUEST_MAPPER_CLASS = "com.example.dapprototype.mapper.RequestMapper";
+    private static final String DECISION_DATA_CLASS = "com.example.dapprototype.model.DecisionData";
     
     private final OpenApiRequestValidator openApiRequestValidator;
     private final ObjectMapper objectMapper;
     private final TxnClassLoaderService txnClassLoaderService;
+    private final CustomerAPI customerAPI;
     
     // Dynamically loaded classes
     private Class<?> requestInfoClass;
+    private Class<?> decisionDataClass;
     private Object requestMapperInstance;
 
     public RequestProcessingService(OpenApiRequestValidator openApiRequestValidator, 
                                    ObjectMapper objectMapper,
-                                   TxnClassLoaderService txnClassLoaderService) {
+                                   TxnClassLoaderService txnClassLoaderService,
+                                   CustomerAPI customerAPI) {
         this.openApiRequestValidator = openApiRequestValidator;
         this.objectMapper = objectMapper;
         this.txnClassLoaderService = txnClassLoaderService;
+        this.customerAPI = customerAPI;
         
         // Load classes dynamically on initialization
         initializeDynamicClasses();
@@ -49,6 +57,11 @@ public class RequestProcessingService {
             requestInfoClass = txnClassLoaderService.loadClass(REQUEST_INFO_CLASS);
             logger.info("Loaded {} using {}", REQUEST_INFO_CLASS, 
                        requestInfoClass.getClassLoader().getClass().getName());
+            
+            // Load DecisionData class dynamically
+            decisionDataClass = txnClassLoaderService.loadClass(DECISION_DATA_CLASS);
+            logger.info("Loaded {} using {}", DECISION_DATA_CLASS,
+                       decisionDataClass.getClassLoader().getClass().getName());
             
             // Load RequestMapper class dynamically
             Class<?> requestMapperClass = txnClassLoaderService.loadClass(REQUEST_MAPPER_CLASS);
@@ -96,17 +109,50 @@ public class RequestProcessingService {
         }
 
         // Create CustomerRequest object from RequestInfo using dynamically loaded mapper
+        CustomerRequest customerRequest;
         try {
-            CustomerRequest customerRequest = mapToCustomerRequest(requestInfo);
+            customerRequest = mapToCustomerRequest(requestInfo);
             logger.debug("Mapped to CustomerRequest: {}", customerRequest);
-            return ResponseEntity.ok(customerRequest);
         } catch (Exception e) {
             logger.error("Failed to map requestInfo to CustomerRequest", e);
             DecisionResponse error = new DecisionResponse(false, "Error processing request", "PROCESSING_ERROR", 
                 java.util.List.of(e.getMessage()));
             return ResponseEntity.status(500).body(error);
         }
+                      
+        // Create DecisionData object and set all attributes
+        Object decisionData;
+        try {
+            // Call CustomerAPI to get customer details
+            List<Customer> customers = customerAPI.getCustomers(customerRequest);
+            logger.debug("Retrieved {} customers from API", customers.size());
+            decisionData = decisionDataClass.getDeclaredConstructor().newInstance();
+
+            Method setRequestInfoMethod = decisionDataClass.getMethod("setRequestInfo", requestInfoClass);
+            setRequestInfoMethod.invoke(decisionData, requestInfo);
+            Map<String, String> customerTags = customerRequest.getCustomerTags();
+        
+            // transformation of customer response into a format suitable for DecisionData
+            // this is being done in a generic manner
+            if (customerTags != null) {
+                for (Customer customer : customers) {
+                    String tag = customerTags.get(customer.getCustomerId());
+                    Method setCustomerMethod = decisionDataClass.getMethod(tag, Customer.class);
+                    setCustomerMethod.invoke(decisionData, customer);
+                }
+            }
+
+            logger.debug("Created DecisionData with requestInfo and customers: {}", decisionData);
+        } catch (Exception e) {
+            logger.error("Failed to create DecisionData", e);
+            DecisionResponse error = new DecisionResponse(false, "Error creating decision data", "PROCESSING_ERROR", 
+                java.util.List.of(e.getMessage()));
+            return ResponseEntity.status(500).body(error);
+        }
+        
+        return ResponseEntity.ok(customerRequest);
     }
+    
     
     /**
      * Maps the dynamically loaded RequestInfo object to CustomerRequest

@@ -32,8 +32,8 @@ class RequestProcessingServiceTest {
         CustomerRequest customerRequest = (CustomerRequest) result.getBody();
         assertThat(customerRequest.getActivityId()).isEqualTo("abcd");
         assertThat(customerRequest.getCustomerIds()).containsExactly("CUST001", "CUST002");
-        assertThat(customerRequest.getCustomerTags()).containsEntry("CUST001", "payeeCustomer");
-        assertThat(customerRequest.getCustomerTags()).containsEntry("CUST002", "payerCustomer");
+        assertThat(customerRequest.getCustomerTags()).containsEntry("CUST001", "setPayeeCustomer");
+        assertThat(customerRequest.getCustomerTags()).containsEntry("CUST002", "setPayerCustomer");
     }
 
     @Test

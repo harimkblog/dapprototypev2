@@ -28,11 +28,11 @@ public interface RequestMapper {
         
         if (requestInfo.getPayeeCustomerId() != null) {
             customerIds.add(requestInfo.getPayeeCustomerId());
-            customerTags.put(requestInfo.getPayeeCustomerId(), "payeeCustomer");
+            customerTags.put(requestInfo.getPayeeCustomerId(), "setPayeeCustomer");
         }
         if (requestInfo.getPayerCustomerId() != null) {
             customerIds.add(requestInfo.getPayerCustomerId());
-            customerTags.put(requestInfo.getPayerCustomerId(), "payerCustomer");
+            customerTags.put(requestInfo.getPayerCustomerId(), "setPayerCustomer");
         }
         
         customerRequest.setCustomerIds(customerIds);
