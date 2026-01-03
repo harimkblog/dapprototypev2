@@ -1,6 +1,6 @@
 package com.example.dapprototype.controller;
 
-import com.example.dapprototype.model.RequestResponse;
+import com.example.dapprototype.model.DecisionResponse;
 import com.example.dapprototype.service.RequestProcessingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,7 +28,7 @@ public class RequestController {
         }
         
         // Validation passed, return success response
-        RequestResponse response = new RequestResponse(true, "Request processed successfully");
+        DecisionResponse response = new DecisionResponse(true, "Request processed successfully", null, null);
         return ResponseEntity.ok(response);
     }
 }

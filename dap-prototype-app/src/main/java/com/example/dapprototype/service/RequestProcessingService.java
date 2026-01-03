@@ -3,7 +3,7 @@ package com.example.dapprototype.service;
 import com.atlassian.oai.validator.report.ValidationReport;
 import com.example.dapprototype.classloader.TxnClassLoaderService;
 import com.example.dapprototype.model.CustomerRequest;
-import com.example.dapprototype.model.ErrorResponse;
+import com.example.dapprototype.model.DecisionResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -69,13 +69,13 @@ public class RequestProcessingService {
      * Validates and processes a raw JSON request body using dynamically loaded classes.
      * 
      * @param rawBody the raw JSON request body
-     * @return ResponseEntity with either the validated RequestInfo or an ErrorResponse
+     * @return ResponseEntity with either the validated RequestInfo or a DecisionResponse
      */
     public ResponseEntity<?> validateAndProcessRequest(String rawBody) {
         // Validate request against OpenAPI spec
         ValidationReport report = openApiRequestValidator.validatePostJson("/request", rawBody, MediaType.APPLICATION_JSON_VALUE);
         if (report.hasErrors()) {
-            ErrorResponse error = new ErrorResponse(false, "Validation failed", "VALIDATION_ERROR", 
+            DecisionResponse error = new DecisionResponse(false, "Validation failed", "VALIDATION_ERROR", 
                 report.getMessages().stream()
                     .map(ValidationReport.Message::toString)
                     .toList());
@@ -90,7 +90,7 @@ public class RequestProcessingService {
             logger.debug("RequestInfo class loader: {}", requestInfo.getClass().getClassLoader());
         } catch (JsonProcessingException ex) {
             logger.error("Failed to deserialize JSON to {}", REQUEST_INFO_CLASS, ex);
-            ErrorResponse error = new ErrorResponse(false, "Invalid JSON payload", "VALIDATION_ERROR", 
+            DecisionResponse error = new DecisionResponse(false, "Invalid JSON payload", "VALIDATION_ERROR", 
                 java.util.List.of("Invalid JSON payload"));
             return ResponseEntity.badRequest().body(error);
         }
@@ -102,7 +102,7 @@ public class RequestProcessingService {
             return ResponseEntity.ok(customerRequest);
         } catch (Exception e) {
             logger.error("Failed to map requestInfo to CustomerRequest", e);
-            ErrorResponse error = new ErrorResponse(false, "Error processing request", "PROCESSING_ERROR", 
+            DecisionResponse error = new DecisionResponse(false, "Error processing request", "PROCESSING_ERROR", 
                 java.util.List.of(e.getMessage()));
             return ResponseEntity.status(500).body(error);
         }

@@ -3,7 +3,7 @@ package com.example.dapprototype.service;
 import com.example.dapprototype.classloader.TxnClassLoaderService;
 import com.example.dapprototype.config.OpenApiValidatorConfig;
 import com.example.dapprototype.model.CustomerRequest;
-import com.example.dapprototype.model.ErrorResponse;
+import com.example.dapprototype.model.DecisionResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,10 +41,10 @@ class RequestProcessingServiceTest {
         ResponseEntity<?> result = requestProcessingService.validateAndProcessRequest(rawBody);
 
         assertThat(result.getStatusCode().is4xxClientError()).isTrue();
-        assertThat(result.getBody()).isInstanceOf(ErrorResponse.class);
-        ErrorResponse errorResponse = (ErrorResponse) result.getBody();
-        assertThat(errorResponse.isSuccess()).isFalse();
-        assertThat(errorResponse.getCode()).isEqualTo("VALIDATION_ERROR");
+        assertThat(result.getBody()).isInstanceOf(DecisionResponse.class);
+        DecisionResponse decisionResponse = (DecisionResponse) result.getBody();
+        assertThat(decisionResponse.isSuccess()).isFalse();
+        assertThat(decisionResponse.getCode()).isEqualTo("VALIDATION_ERROR");
     }
 
     @Test
@@ -55,10 +55,10 @@ class RequestProcessingServiceTest {
         ResponseEntity<?> result = requestProcessingService.validateAndProcessRequest(rawBody);
 
         assertThat(result.getStatusCode().is4xxClientError()).isTrue();
-        assertThat(result.getBody()).isInstanceOf(ErrorResponse.class);
-        ErrorResponse errorResponse = (ErrorResponse) result.getBody();
-        assertThat(errorResponse.isSuccess()).isFalse();
-        assertThat(errorResponse.getCode()).isEqualTo("VALIDATION_ERROR");
+        assertThat(result.getBody()).isInstanceOf(DecisionResponse.class);
+        DecisionResponse decisionResponse = (DecisionResponse) result.getBody();
+        assertThat(decisionResponse.isSuccess()).isFalse();
+        assertThat(decisionResponse.getCode()).isEqualTo("VALIDATION_ERROR");
     }
 
     @Test
@@ -69,10 +69,10 @@ class RequestProcessingServiceTest {
         ResponseEntity<?> result = requestProcessingService.validateAndProcessRequest(rawBody);
 
         assertThat(result.getStatusCode().is4xxClientError()).isTrue();
-        assertThat(result.getBody()).isInstanceOf(ErrorResponse.class);
-        ErrorResponse errorResponse = (ErrorResponse) result.getBody();
-        assertThat(errorResponse.isSuccess()).isFalse();
-        assertThat(errorResponse.getCode()).isEqualTo("VALIDATION_ERROR");
+        assertThat(result.getBody()).isInstanceOf(DecisionResponse.class);
+        DecisionResponse decisionResponse = (DecisionResponse) result.getBody();
+        assertThat(decisionResponse.isSuccess()).isFalse();
+        assertThat(decisionResponse.getCode()).isEqualTo("VALIDATION_ERROR");
     }
 
     @Test
@@ -83,9 +83,9 @@ class RequestProcessingServiceTest {
         ResponseEntity<?> result = requestProcessingService.validateAndProcessRequest(rawBody);
 
         assertThat(result.getStatusCode().is4xxClientError()).isTrue();
-        assertThat(result.getBody()).isInstanceOf(ErrorResponse.class);
-        ErrorResponse errorResponse = (ErrorResponse) result.getBody();
-        assertThat(errorResponse.isSuccess()).isFalse();
+        assertThat(result.getBody()).isInstanceOf(DecisionResponse.class);
+        DecisionResponse decisionResponse = (DecisionResponse) result.getBody();
+        assertThat(decisionResponse.isSuccess()).isFalse();
     }
 
     @Test
@@ -96,10 +96,10 @@ class RequestProcessingServiceTest {
         ResponseEntity<?> result = requestProcessingService.validateAndProcessRequest(rawBody);
 
         assertThat(result.getStatusCode().is4xxClientError()).isTrue();
-        assertThat(result.getBody()).isInstanceOf(ErrorResponse.class);
-        ErrorResponse errorResponse = (ErrorResponse) result.getBody();
-        assertThat(errorResponse.isSuccess()).isFalse();
-        assertThat(errorResponse.getCode()).isEqualTo("VALIDATION_ERROR");
+        assertThat(result.getBody()).isInstanceOf(DecisionResponse.class);
+        DecisionResponse decisionResponse = (DecisionResponse) result.getBody();
+        assertThat(decisionResponse.isSuccess()).isFalse();
+        assertThat(decisionResponse.getCode()).isEqualTo("VALIDATION_ERROR");
     }
 
     @Test
@@ -110,10 +110,10 @@ class RequestProcessingServiceTest {
         ResponseEntity<?> result = requestProcessingService.validateAndProcessRequest(rawBody);
 
         assertThat(result.getStatusCode().is4xxClientError()).isTrue();
-        assertThat(result.getBody()).isInstanceOf(ErrorResponse.class);
-        ErrorResponse errorResponse = (ErrorResponse) result.getBody();
-        assertThat(errorResponse.isSuccess()).isFalse();
-        assertThat(errorResponse.getCode()).isEqualTo("VALIDATION_ERROR");
+        assertThat(result.getBody()).isInstanceOf(DecisionResponse.class);
+        DecisionResponse decisionResponse = (DecisionResponse) result.getBody();
+        assertThat(decisionResponse.isSuccess()).isFalse();
+        assertThat(decisionResponse.getCode()).isEqualTo("VALIDATION_ERROR");
     }
 
     @Test
@@ -124,9 +124,9 @@ class RequestProcessingServiceTest {
         ResponseEntity<?> result = requestProcessingService.validateAndProcessRequest(rawBody);
 
         assertThat(result.getStatusCode().is4xxClientError()).isTrue();
-        assertThat(result.getBody()).isInstanceOf(ErrorResponse.class);
-        ErrorResponse errorResponse = (ErrorResponse) result.getBody();
-        assertThat(errorResponse.isSuccess()).isFalse();
-        assertThat(errorResponse.getCode()).isEqualTo("VALIDATION_ERROR");
+        assertThat(result.getBody()).isInstanceOf(DecisionResponse.class);
+        DecisionResponse decisionResponse = (DecisionResponse) result.getBody();
+        assertThat(decisionResponse.isSuccess()).isFalse();
+        assertThat(decisionResponse.getCode()).isEqualTo("VALIDATION_ERROR");
     }
 }

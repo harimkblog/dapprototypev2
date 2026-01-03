@@ -38,19 +38,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/RequestResponse'
+                $ref: '#/components/schemas/DecisionResponse'
         '400':
           description: Bad request - Invalid input
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/DecisionResponse'
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                $ref: '#/components/schemas/DecisionResponse'
 
 components:
   schemas:
@@ -72,19 +72,7 @@ components:
           description: Timestamp of the activity in RFC3339 format 'YYYY-MM-DDTHH:mm:ssZ'
           example: "2025-12-30T13:36:00Z"
 
-    RequestResponse:
-      type: object
-      properties:
-        success:
-          type: boolean
-          description: Indicates if the request was processed successfully
-          example: true
-        message:
-          type: string
-          description: Response message
-          example: "Request processed successfully"
-
-    ErrorResponse:
+    DecisionResponse:
       type: object
       required:
         - success
@@ -96,15 +84,15 @@ components:
           example: false
         message:
           type: string
-          description: Error message
+          description: Response message
           example: "Invalid request format"
         code:
           type: string
-          description: Error code for debugging
+          description: Response code for debugging
           example: "ERR_INVALID_INPUT"
         details:
           type: object
-          description: Additional error details
+          description: Additional response details
           additionalProperties: true
 
 tags:
