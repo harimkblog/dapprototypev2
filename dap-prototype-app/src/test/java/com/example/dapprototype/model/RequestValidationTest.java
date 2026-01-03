@@ -23,7 +23,7 @@ class RequestValidationTest {
     @Test
     @DisplayName("OpenAPI validator accepts a valid payload")
     void requestInfoValid() {
-        String body = "{\"activityId\": \"abcd\", \"activityTimeStamp\": \"2025-12-30T13:36:00Z\"}";
+        String body = "{\"activityId\": \"abcd\", \"activityTimeStamp\": \"2025-12-30T13:36:00Z\", \"payeeCustomerId\": \"CUST001\", \"payerCustomerId\": \"CUST002\"}";
         ValidationReport report = validator.validateRequest(SimpleRequest.Builder.post("/request")
                 .withContentType("application/json")
                 .withBody(body)
@@ -34,7 +34,7 @@ class RequestValidationTest {
     @Test
     @DisplayName("OpenAPI validator rejects missing activityId")
     void requestInfoBlankActivityId() {
-        String body = "{\"activityTimeStamp\": \"2025-12-30T13:36:00Z\"}";
+        String body = "{\"activityTimeStamp\": \"2025-12-30T13:36:00Z\", \"payeeCustomerId\": \"CUST001\", \"payerCustomerId\": \"CUST002\"}";
         ValidationReport report = validator.validateRequest(SimpleRequest.Builder.post("/request")
                 .withContentType("application/json")
                 .withBody(body)

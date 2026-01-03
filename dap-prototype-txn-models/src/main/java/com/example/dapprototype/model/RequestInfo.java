@@ -10,4 +10,6 @@ import lombok.NoArgsConstructor;
 public class RequestInfo {
         private String activityId;
         private String activityTimeStamp;
+        private String payeeCustomerId;
+        private String payerCustomerId;
 }
