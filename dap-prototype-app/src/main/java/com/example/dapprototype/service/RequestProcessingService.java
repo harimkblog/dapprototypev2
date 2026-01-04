@@ -28,7 +28,7 @@ public class RequestProcessingService {
     private final OpenApiRequestValidator openApiRequestValidator;
     private final ObjectMapper objectMapper;
     private final TxnClassLoaderService txnClassLoaderService;
-    private final CustomerAPI customerAPI;
+    private final MockCustomerAPI mockCustomerAPI;
     
     // Dynamically loaded classes
     private Class<?> requestInfoClass;
@@ -38,11 +38,11 @@ public class RequestProcessingService {
     public RequestProcessingService(OpenApiRequestValidator openApiRequestValidator, 
                                    ObjectMapper objectMapper,
                                    TxnClassLoaderService txnClassLoaderService,
-                                   CustomerAPI customerAPI) {
+                                   MockCustomerAPI mockCustomerAPI) {
         this.openApiRequestValidator = openApiRequestValidator;
         this.objectMapper = objectMapper;
         this.txnClassLoaderService = txnClassLoaderService;
-        this.customerAPI = customerAPI;
+        this.mockCustomerAPI = mockCustomerAPI;
         
         // Load classes dynamically on initialization
         initializeDynamicClasses();
@@ -123,8 +123,8 @@ public class RequestProcessingService {
         // Create DecisionData object and set all attributes
         Object decisionData;
         try {
-            // Call CustomerAPI to get customer details
-            List<Customer> customers = customerAPI.getCustomers(customerRequest);
+            // Call MockCustomerAPI to get customer details
+            List<Customer> customers = mockCustomerAPI.getCustomers(customerRequest);
             logger.debug("Retrieved {} customers from API", customers.size());
             decisionData = decisionDataClass.getDeclaredConstructor().newInstance();
 

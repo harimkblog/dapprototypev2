@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class CustomerAPI {
+public class MockCustomerAPI {
 
-    private static final Logger logger = LoggerFactory.getLogger(CustomerAPI.class);
+    private static final Logger logger = LoggerFactory.getLogger(MockCustomerAPI.class);
 
     /**
      * Retrieves customer information for each customer ID in the request.
