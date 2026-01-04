@@ -14,5 +14,6 @@ public class DecisionResponse {
     private String message;
     private String code;
     private List<String> details;
+    private RulesResponse rulesResponse;
 
 }

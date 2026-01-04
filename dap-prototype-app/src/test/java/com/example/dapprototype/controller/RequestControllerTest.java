@@ -3,6 +3,7 @@ package com.example.dapprototype.controller;
 import com.example.dapprototype.classloader.TxnClassLoaderService;
 import com.example.dapprototype.config.OpenApiValidatorConfig;
 import com.example.dapprototype.service.MockCustomerAPI;
+import com.example.dapprototype.service.MockRulesAPI;
 import com.example.dapprototype.service.OpenApiRequestValidator;
 import com.example.dapprototype.service.RequestProcessingService;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = RequestController.class)
-@Import({RequestProcessingService.class, OpenApiRequestValidator.class, OpenApiValidatorConfig.class, TxnClassLoaderService.class, MockCustomerAPI.class})
+@Import({RequestProcessingService.class, OpenApiRequestValidator.class, OpenApiValidatorConfig.class, TxnClassLoaderService.class, MockCustomerAPI.class, MockRulesAPI.class})
 class RequestControllerTest {
 
     @Autowired

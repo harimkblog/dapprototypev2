@@ -11,4 +11,5 @@ public class DecisionData {
     private RequestInfo requestInfo;
     private Customer payeeCustomer;
     private Customer payerCustomer;
+    private RulesResponse rulesResponse;
 }

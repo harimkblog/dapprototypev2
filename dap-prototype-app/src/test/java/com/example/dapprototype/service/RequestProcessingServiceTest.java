@@ -21,19 +21,20 @@ class RequestProcessingServiceTest {
     private RequestProcessingService requestProcessingService;
 
     @Test
-    @DisplayName("validateAndProcessRequest returns success for valid payload and creates CustomerRequest")
+    @DisplayName("validateAndProcessRequest returns success for valid payload with DecisionResponse")
     void validateAndProcessRequest_withValidPayload_returnsSuccess() throws Exception {
         String rawBody = "{\"activityId\": \"abcd\", \"activityTimeStamp\": \"2025-12-30T13:36:00Z\", \"payeeCustomerId\": \"CUST001\", \"payerCustomerId\": \"CUST002\"}";
 
         ResponseEntity<?> result = requestProcessingService.validateAndProcessRequest(rawBody);
 
         assertThat(result.getStatusCode().is2xxSuccessful()).isTrue();
-        assertThat(result.getBody()).isInstanceOf(CustomerRequest.class);
-        CustomerRequest customerRequest = (CustomerRequest) result.getBody();
-        assertThat(customerRequest.getActivityId()).isEqualTo("abcd");
-        assertThat(customerRequest.getCustomerIds()).containsExactly("CUST001", "CUST002");
-        assertThat(customerRequest.getCustomerTags()).containsEntry("CUST001", "setPayeeCustomer");
-        assertThat(customerRequest.getCustomerTags()).containsEntry("CUST002", "setPayerCustomer");
+        assertThat(result.getBody()).isInstanceOf(DecisionResponse.class);
+        DecisionResponse decisionResponse = (DecisionResponse) result.getBody();
+        assertThat(decisionResponse.isSuccess()).isTrue();
+        assertThat(decisionResponse.getMessage()).isEqualTo("Request processed successfully");
+        assertThat(decisionResponse.getCode()).isEqualTo("SUCCESS");
+        assertThat(decisionResponse.getRulesResponse()).isNotNull();
+        assertThat(decisionResponse.getRulesResponse().getDecision()).isEqualTo("Step Up");
     }
 
     @Test

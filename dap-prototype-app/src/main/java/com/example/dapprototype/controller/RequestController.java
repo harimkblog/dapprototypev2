@@ -20,15 +20,6 @@ public class RequestController {
 
     @PostMapping("/request")
     public ResponseEntity<?> submitRequest(@RequestBody String rawBody) {
-        ResponseEntity<?> validationResult = requestProcessingService.validateAndProcessRequest(rawBody);
-        
-        // If validation failed, return the error response
-        if (validationResult.getStatusCode().is4xxClientError()) {
-            return validationResult;
-        }
-        
-        // Validation passed, return success response
-        DecisionResponse response = new DecisionResponse(true, "Request processed successfully", null, null);
-        return ResponseEntity.ok(response);
+        return requestProcessingService.validateAndProcessRequest(rawBody);
     }
 }

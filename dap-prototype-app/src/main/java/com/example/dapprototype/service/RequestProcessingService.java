@@ -29,6 +29,7 @@ public class RequestProcessingService {
     private final ObjectMapper objectMapper;
     private final TxnClassLoaderService txnClassLoaderService;
     private final MockCustomerAPI mockCustomerAPI;
+    private final MockRulesAPI mockRulesAPI;
     
     // Dynamically loaded classes
     private Class<?> requestInfoClass;
@@ -38,11 +39,13 @@ public class RequestProcessingService {
     public RequestProcessingService(OpenApiRequestValidator openApiRequestValidator, 
                                    ObjectMapper objectMapper,
                                    TxnClassLoaderService txnClassLoaderService,
-                                   MockCustomerAPI mockCustomerAPI) {
+                                   MockCustomerAPI mockCustomerAPI,
+                                   MockRulesAPI mockRulesAPI) {
         this.openApiRequestValidator = openApiRequestValidator;
         this.objectMapper = objectMapper;
         this.txnClassLoaderService = txnClassLoaderService;
         this.mockCustomerAPI = mockCustomerAPI;
+        this.mockRulesAPI = mockRulesAPI;
         
         // Load classes dynamically on initialization
         initializeDynamicClasses();
@@ -91,7 +94,7 @@ public class RequestProcessingService {
             DecisionResponse error = new DecisionResponse(false, "Validation failed", "VALIDATION_ERROR", 
                 report.getMessages().stream()
                     .map(ValidationReport.Message::toString)
-                    .toList());
+                    .toList(), null);
             return ResponseEntity.badRequest().body(error);
         }
 
@@ -104,7 +107,7 @@ public class RequestProcessingService {
         } catch (JsonProcessingException ex) {
             logger.error("Failed to deserialize JSON to {}", REQUEST_INFO_CLASS, ex);
             DecisionResponse error = new DecisionResponse(false, "Invalid JSON payload", "VALIDATION_ERROR", 
-                java.util.List.of("Invalid JSON payload"));
+                java.util.List.of("Invalid JSON payload"), null);
             return ResponseEntity.badRequest().body(error);
         }
 
@@ -116,7 +119,7 @@ public class RequestProcessingService {
         } catch (Exception e) {
             logger.error("Failed to map requestInfo to CustomerRequest", e);
             DecisionResponse error = new DecisionResponse(false, "Error processing request", "PROCESSING_ERROR", 
-                java.util.List.of(e.getMessage()));
+                java.util.List.of(e.getMessage()), null);
             return ResponseEntity.status(500).body(error);
         }
                       
@@ -146,11 +149,44 @@ public class RequestProcessingService {
         } catch (Exception e) {
             logger.error("Failed to create DecisionData", e);
             DecisionResponse error = new DecisionResponse(false, "Error creating decision data", "PROCESSING_ERROR", 
-                java.util.List.of(e.getMessage()));
+                java.util.List.of(e.getMessage()), null);
             return ResponseEntity.status(500).body(error);
         }
         
-        return ResponseEntity.ok(customerRequest);
+        return evaluateRulesAndCreateResponse(decisionData);
+    }
+    
+    /**
+     * Evaluates rules on the decision data and creates a response.
+     * 
+     * @param decisionData the decision data object
+     * @return ResponseEntity with DecisionResponse
+     */
+    private ResponseEntity<?> evaluateRulesAndCreateResponse(Object decisionData) {
+        // Evaluate rules and get rulesResponse
+        try {
+            mockRulesAPI.evaluateRules(decisionData);
+            
+            // Extract rulesResponse from decisionData
+            Method getRulesResponseMethod = decisionDataClass.getMethod("getRulesResponse");
+            Object rulesResponse = getRulesResponseMethod.invoke(decisionData);
+            
+            // Create success response with rulesResponse
+            DecisionResponse successResponse = new DecisionResponse(
+                true, 
+                "Request processed successfully", 
+                "SUCCESS", 
+                java.util.List.of(), 
+                (com.example.dapprototype.model.RulesResponse) rulesResponse
+            );
+            
+            return ResponseEntity.ok(successResponse);
+        } catch (Exception e) {
+            logger.error("Failed to evaluate rules", e);
+            DecisionResponse error = new DecisionResponse(false, "Error evaluating rules", "PROCESSING_ERROR", 
+                java.util.List.of(e.getMessage()), null);
+            return ResponseEntity.status(500).body(error);
+        }
     }
     
     
