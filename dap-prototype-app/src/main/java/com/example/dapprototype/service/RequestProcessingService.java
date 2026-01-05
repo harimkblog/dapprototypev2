@@ -21,9 +21,9 @@ import java.util.Map;
 public class RequestProcessingService {
 
     private static final Logger logger = LoggerFactory.getLogger(RequestProcessingService.class);
-    private static final String REQUEST_INFO_CLASS = "com.example.dapprototype.model.RequestInfo";
-    private static final String REQUEST_MAPPER_CLASS = "com.example.dapprototype.mapper.RequestMapper";
-    private static final String DECISION_DATA_CLASS = "com.example.dapprototype.model.DecisionData";
+    private static final String REQUEST_INFO_CLASS = "com.example.dapprototype.model.PaymentRequestInfo";
+    private static final String REQUEST_MAPPER_CLASS = "com.example.dapprototype.mapper.PaymentRequestMapper";
+    private static final String DECISION_DATA_CLASS = "com.example.dapprototype.model.PaymentAssessmentData";
     
     private final OpenApiRequestValidator openApiRequestValidator;
     private final ObjectMapper objectMapper;
@@ -33,7 +33,7 @@ public class RequestProcessingService {
     
     // Dynamically loaded classes
     private Class<?> requestInfoClass;
-    private Class<?> decisionDataClass;
+    private Class<?> paymentAssessmentDataClass;
     private Object requestMapperInstance;
 
     public RequestProcessingService(OpenApiRequestValidator openApiRequestValidator, 
@@ -56,24 +56,24 @@ public class RequestProcessingService {
      */
     private void initializeDynamicClasses() {
         try {
-            // Load RequestInfo class dynamically
+            // Load PaymentRequestInfo class dynamically
             requestInfoClass = txnClassLoaderService.loadClass(REQUEST_INFO_CLASS);
             logger.info("Loaded {} using {}", REQUEST_INFO_CLASS, 
                        requestInfoClass.getClassLoader().getClass().getName());
             
-            // Load DecisionData class dynamically
-            decisionDataClass = txnClassLoaderService.loadClass(DECISION_DATA_CLASS);
+            // Load PaymentAssessmentData class dynamically
+            paymentAssessmentDataClass = txnClassLoaderService.loadClass(DECISION_DATA_CLASS);
             logger.info("Loaded {} using {}", DECISION_DATA_CLASS,
-                       decisionDataClass.getClassLoader().getClass().getName());
+                       paymentAssessmentDataClass.getClassLoader().getClass().getName());
             
-            // Load RequestMapper class dynamically
-            Class<?> requestMapperClass = txnClassLoaderService.loadClass(REQUEST_MAPPER_CLASS);
+            // Load PaymentRequestMapper class dynamically
+            Class<?> paymentRequestMapperClass = txnClassLoaderService.loadClass(REQUEST_MAPPER_CLASS);
             logger.info("Loaded {} using {}", REQUEST_MAPPER_CLASS, 
-                       requestMapperClass.getClassLoader().getClass().getName());
+                       paymentRequestMapperClass.getClassLoader().getClass().getName());
             
-            // Get the INSTANCE field from RequestMapper (MapStruct generated)
-            requestMapperInstance = requestMapperClass.getField("INSTANCE").get(null);
-            logger.info("Retrieved RequestMapper INSTANCE");
+            // Get the INSTANCE field from PaymentRequestMapper (MapStruct generated)
+            requestMapperInstance = paymentRequestMapperClass.getField("INSTANCE").get(null);
+            logger.info("Retrieved PaymentRequestMapper INSTANCE");
             
         } catch (Exception e) {
             logger.error("Failed to initialize dynamic classes", e);
@@ -85,7 +85,7 @@ public class RequestProcessingService {
      * Validates and processes a raw JSON request body using dynamically loaded classes.
      * 
      * @param rawBody the raw JSON request body
-     * @return ResponseEntity with either the validated RequestInfo or a DecisionResponse
+     * @return ResponseEntity with either the validated PaymentRequestInfo or a DecisionResponse
      */
     public ResponseEntity<?> validateAndProcessRequest(String rawBody) {
         // Validate request against OpenAPI spec
@@ -123,53 +123,53 @@ public class RequestProcessingService {
             return ResponseEntity.status(500).body(error);
         }
                       
-        // Create DecisionData object and set all attributes
-        Object decisionData;
+        // Create PaymentAssessmentData object and set all attributes
+        Object paymentAssessmentData;
         try {
             // Call MockCustomerAPI to get customer details
             List<Customer> customers = mockCustomerAPI.getCustomers(customerRequest);
             logger.debug("Retrieved {} customers from API", customers.size());
-            decisionData = decisionDataClass.getDeclaredConstructor().newInstance();
+            paymentAssessmentData = paymentAssessmentDataClass.getDeclaredConstructor().newInstance();
 
-            Method setRequestInfoMethod = decisionDataClass.getMethod("setRequestInfo", requestInfoClass);
-            setRequestInfoMethod.invoke(decisionData, requestInfo);
+            Method setRequestInfoMethod = paymentAssessmentDataClass.getMethod("setRequestInfo", requestInfoClass);
+            setRequestInfoMethod.invoke(paymentAssessmentData, requestInfo);
             Map<String, String> customerTags = customerRequest.getCustomerTags();
         
-            // transformation of customer response into a format suitable for DecisionData
+            // transformation of customer response into a format suitable for PaymentAssessmentData
             // this is being done in a generic manner
             if (customerTags != null) {
                 for (Customer customer : customers) {
                     String tag = customerTags.get(customer.getCustomerId());
-                    Method setCustomerMethod = decisionDataClass.getMethod(tag, Customer.class);
-                    setCustomerMethod.invoke(decisionData, customer);
+                    Method setCustomerMethod = paymentAssessmentDataClass.getMethod(tag, Customer.class);
+                    setCustomerMethod.invoke(paymentAssessmentData, customer);
                 }
             }
 
-            logger.debug("Created DecisionData with requestInfo and customers: {}", decisionData);
+            logger.debug("Created PaymentAssessmentData with requestInfo and customers: {}", paymentAssessmentData);
         } catch (Exception e) {
-            logger.error("Failed to create DecisionData", e);
-            DecisionResponse error = new DecisionResponse(false, "Error creating decision data", "PROCESSING_ERROR", 
+            logger.error("Failed to create PaymentAssessmentData", e);
+            DecisionResponse error = new DecisionResponse(false, "Error creating payment assessment data", "PROCESSING_ERROR", 
                 java.util.List.of(e.getMessage()), null);
             return ResponseEntity.status(500).body(error);
         }
         
-        return evaluateRulesAndCreateResponse(decisionData);
+        return evaluateRulesAndCreateResponse(paymentAssessmentData);
     }
     
     /**
-     * Evaluates rules on the decision data and creates a response.
+     * Evaluates rules on the payment assessment data and creates a response.
      * 
-     * @param decisionData the decision data object
+     * @param paymentAssessmentData the payment assessment data object
      * @return ResponseEntity with DecisionResponse
      */
-    private ResponseEntity<?> evaluateRulesAndCreateResponse(Object decisionData) {
+    private ResponseEntity<?> evaluateRulesAndCreateResponse(Object paymentAssessmentData) {
         // Evaluate rules and get rulesResponse
         try {
-            mockRulesAPI.evaluateRules(decisionData);
+            mockRulesAPI.evaluateRules(paymentAssessmentData);
             
-            // Extract rulesResponse from decisionData
-            Method getRulesResponseMethod = decisionDataClass.getMethod("getRulesResponse");
-            Object rulesResponse = getRulesResponseMethod.invoke(decisionData);
+            // Extract rulesResponse from paymentAssessmentData
+            Method getRulesResponseMethod = paymentAssessmentDataClass.getMethod("getRulesResponse");
+            Object rulesResponse = getRulesResponseMethod.invoke(paymentAssessmentData);
             
             // Create success response with rulesResponse
             DecisionResponse successResponse = new DecisionResponse(

@@ -1,7 +1,7 @@
 package com.example.dapprototype.mapper;
 
 import com.example.dapprototype.model.CustomerRequest;
-import com.example.dapprototype.model.RequestInfo;
+import com.example.dapprototype.model.PaymentRequestInfo;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -14,15 +14,15 @@ import java.util.List;
 import java.util.Map;
 
 @Mapper(componentModel = "spring")
-public interface RequestMapper {
+public interface PaymentRequestMapper {
 
-    RequestMapper INSTANCE = Mappers.getMapper(RequestMapper.class);
+    PaymentRequestMapper INSTANCE = Mappers.getMapper(PaymentRequestMapper.class);
 
     @Mapping(source = "activityId", target = "activityId")    
-    CustomerRequest toCustomerRequest(RequestInfo requestInfo);
+    CustomerRequest toCustomerRequest(PaymentRequestInfo requestInfo);
     
     @AfterMapping
-    default void populateCustomerIds(RequestInfo requestInfo, @MappingTarget CustomerRequest customerRequest) {
+    default void populateCustomerIds(PaymentRequestInfo requestInfo, @MappingTarget CustomerRequest customerRequest) {
         List<String> customerIds = new ArrayList<>();
         Map<String, String> customerTags = new HashMap<>();
         

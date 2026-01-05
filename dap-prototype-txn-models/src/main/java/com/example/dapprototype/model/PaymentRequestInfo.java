@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RequestInfo {
+public class PaymentRequestInfo {
         private String activityId;
         private String activityTimeStamp;
         private String payeeCustomerId;
