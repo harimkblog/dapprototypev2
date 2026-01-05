@@ -1,6 +1,6 @@
 package com.example.dapprototype.controller;
 
-import com.example.dapprototype.model.DecisionResponse;
+import com.example.dapprototype.model.DAResponse;
 import com.example.dapprototype.service.RequestProcessingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

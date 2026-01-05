@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class DecisionResponse {
+public class DAResponse {
     private boolean success;
     private String message;
     private String code;

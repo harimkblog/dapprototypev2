@@ -3,7 +3,7 @@ package com.example.dapprototype.service;
 import com.example.dapprototype.classloader.TxnClassLoaderService;
 import com.example.dapprototype.config.OpenApiValidatorConfig;
 import com.example.dapprototype.model.CustomerRequest;
-import com.example.dapprototype.model.DecisionResponse;
+import com.example.dapprototype.model.DAResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +21,15 @@ class RequestProcessingServiceTest {
     private RequestProcessingService requestProcessingService;
 
     @Test
-    @DisplayName("validateAndProcessRequest returns success for valid payload with DecisionResponse")
+    @DisplayName("validateAndProcessRequest returns success for valid payload with DAResponse")
     void validateAndProcessRequest_withValidPayload_returnsSuccess() throws Exception {
         String rawBody = "{\"activityId\": \"abcd\", \"activityTimeStamp\": \"2025-12-30T13:36:00Z\", \"payeeCustomerId\": \"CUST001\", \"payerCustomerId\": \"CUST002\"}";
 
         ResponseEntity<?> result = requestProcessingService.validateAndProcessRequest(rawBody);
 
         assertThat(result.getStatusCode().is2xxSuccessful()).isTrue();
-        assertThat(result.getBody()).isInstanceOf(DecisionResponse.class);
-        DecisionResponse decisionResponse = (DecisionResponse) result.getBody();
+        assertThat(result.getBody()).isInstanceOf(DAResponse.class);
+        DAResponse decisionResponse = (DAResponse) result.getBody();
         assertThat(decisionResponse.isSuccess()).isTrue();
         assertThat(decisionResponse.getMessage()).isEqualTo("Request processed successfully");
         assertThat(decisionResponse.getCode()).isEqualTo("SUCCESS");
@@ -45,8 +45,8 @@ class RequestProcessingServiceTest {
         ResponseEntity<?> result = requestProcessingService.validateAndProcessRequest(rawBody);
 
         assertThat(result.getStatusCode().is4xxClientError()).isTrue();
-        assertThat(result.getBody()).isInstanceOf(DecisionResponse.class);
-        DecisionResponse decisionResponse = (DecisionResponse) result.getBody();
+        assertThat(result.getBody()).isInstanceOf(DAResponse.class);
+        DAResponse decisionResponse = (DAResponse) result.getBody();
         assertThat(decisionResponse.isSuccess()).isFalse();
         assertThat(decisionResponse.getCode()).isEqualTo("VALIDATION_ERROR");
     }
@@ -59,8 +59,8 @@ class RequestProcessingServiceTest {
         ResponseEntity<?> result = requestProcessingService.validateAndProcessRequest(rawBody);
 
         assertThat(result.getStatusCode().is4xxClientError()).isTrue();
-        assertThat(result.getBody()).isInstanceOf(DecisionResponse.class);
-        DecisionResponse decisionResponse = (DecisionResponse) result.getBody();
+        assertThat(result.getBody()).isInstanceOf(DAResponse.class);
+        DAResponse decisionResponse = (DAResponse) result.getBody();
         assertThat(decisionResponse.isSuccess()).isFalse();
         assertThat(decisionResponse.getCode()).isEqualTo("VALIDATION_ERROR");
     }
@@ -73,8 +73,8 @@ class RequestProcessingServiceTest {
         ResponseEntity<?> result = requestProcessingService.validateAndProcessRequest(rawBody);
 
         assertThat(result.getStatusCode().is4xxClientError()).isTrue();
-        assertThat(result.getBody()).isInstanceOf(DecisionResponse.class);
-        DecisionResponse decisionResponse = (DecisionResponse) result.getBody();
+        assertThat(result.getBody()).isInstanceOf(DAResponse.class);
+        DAResponse decisionResponse = (DAResponse) result.getBody();
         assertThat(decisionResponse.isSuccess()).isFalse();
         assertThat(decisionResponse.getCode()).isEqualTo("VALIDATION_ERROR");
     }
@@ -87,8 +87,8 @@ class RequestProcessingServiceTest {
         ResponseEntity<?> result = requestProcessingService.validateAndProcessRequest(rawBody);
 
         assertThat(result.getStatusCode().is4xxClientError()).isTrue();
-        assertThat(result.getBody()).isInstanceOf(DecisionResponse.class);
-        DecisionResponse decisionResponse = (DecisionResponse) result.getBody();
+        assertThat(result.getBody()).isInstanceOf(DAResponse.class);
+        DAResponse decisionResponse = (DAResponse) result.getBody();
         assertThat(decisionResponse.isSuccess()).isFalse();
     }
 
@@ -100,8 +100,8 @@ class RequestProcessingServiceTest {
         ResponseEntity<?> result = requestProcessingService.validateAndProcessRequest(rawBody);
 
         assertThat(result.getStatusCode().is4xxClientError()).isTrue();
-        assertThat(result.getBody()).isInstanceOf(DecisionResponse.class);
-        DecisionResponse decisionResponse = (DecisionResponse) result.getBody();
+        assertThat(result.getBody()).isInstanceOf(DAResponse.class);
+        DAResponse decisionResponse = (DAResponse) result.getBody();
         assertThat(decisionResponse.isSuccess()).isFalse();
         assertThat(decisionResponse.getCode()).isEqualTo("VALIDATION_ERROR");
     }
@@ -114,8 +114,8 @@ class RequestProcessingServiceTest {
         ResponseEntity<?> result = requestProcessingService.validateAndProcessRequest(rawBody);
 
         assertThat(result.getStatusCode().is4xxClientError()).isTrue();
-        assertThat(result.getBody()).isInstanceOf(DecisionResponse.class);
-        DecisionResponse decisionResponse = (DecisionResponse) result.getBody();
+        assertThat(result.getBody()).isInstanceOf(DAResponse.class);
+        DAResponse decisionResponse = (DAResponse) result.getBody();
         assertThat(decisionResponse.isSuccess()).isFalse();
         assertThat(decisionResponse.getCode()).isEqualTo("VALIDATION_ERROR");
     }
@@ -128,8 +128,8 @@ class RequestProcessingServiceTest {
         ResponseEntity<?> result = requestProcessingService.validateAndProcessRequest(rawBody);
 
         assertThat(result.getStatusCode().is4xxClientError()).isTrue();
-        assertThat(result.getBody()).isInstanceOf(DecisionResponse.class);
-        DecisionResponse decisionResponse = (DecisionResponse) result.getBody();
+        assertThat(result.getBody()).isInstanceOf(DAResponse.class);
+        DAResponse decisionResponse = (DAResponse) result.getBody();
         assertThat(decisionResponse.isSuccess()).isFalse();
         assertThat(decisionResponse.getCode()).isEqualTo("VALIDATION_ERROR");
     }

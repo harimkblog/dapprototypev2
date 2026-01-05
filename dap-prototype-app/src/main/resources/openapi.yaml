@@ -40,19 +40,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DecisionResponse'
+                $ref: '#/components/schemas/DAResponse'
         '400':
           description: Bad request - Invalid input
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DecisionResponse'
+                $ref: '#/components/schemas/DAResponse'
         '500':
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/DecisionResponse'
+                $ref: '#/components/schemas/DAResponse'
 
 components:
   schemas:
@@ -88,7 +88,7 @@ components:
           minLength: 1
           maxLength: 256
 
-    DecisionResponse:
+    DAResponse:
       type: object
       required:
         - success
